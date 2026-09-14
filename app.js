@@ -2,6 +2,8 @@ const fileInput = document.getElementById("csvFile");
 const status = document.getElementById("status");
 const summary = document.getElementById("summary");
 const tableContainer = document.getElementById("tableContainer");
+let currentHeaders = [];
+let currentDataRows = [];
 
 /*
 Listen for a CSV file being selected.
