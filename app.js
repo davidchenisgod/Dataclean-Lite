@@ -216,11 +216,14 @@ function displaySummary(headers, dataRows) {
     } else {
 
         html += `
-            <p>
-                ⚠️ <strong>${report.duplicates.length}</strong>
-                duplicate record(s) found.
-            </p>
-        `;
+    <p>
+        ⚠️ <strong>Inconsistent phone formatting</strong>
+    </p>
+    <p>
+        Some phone numbers appear to use different formats.
+        This does not necessarily mean the numbers are incorrect.
+    </p>
+`;
 
         html += `<ul>`;
 
