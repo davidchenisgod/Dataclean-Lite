@@ -1,0 +1,103 @@
+* {
+  box-sizing: border-box;
+  }
+
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 20px;
+background: #f5f5f5;
+color: #222;
+}
+
+.container {
+max-width: 1100px;
+margin: 0 auto;
+background: white;
+padding: 25px;
+border-radius: 10px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+margin-top: 0;
+margin-bottom: 8px;
+}
+
+.description {
+margin-top: 0;
+color: #555;
+}
+
+.upload-section {
+margin-top: 25px;
+padding: 20px;
+border: 2px dashed #ccc;
+border-radius: 8px;
+background: #fafafa;
+}
+
+.upload-section label {
+display: block;
+margin-bottom: 10px;
+font-weight: bold;
+}
+
+#csvFile {
+width: 100%;
+max-width: 400px;
+}
+
+.status {
+margin-top: 15px;
+font-weight: bold;
+}
+
+.summary {
+display: none;
+margin-top: 20px;
+padding: 15px;
+background: #f0f0f0;
+border-radius: 8px;
+}
+
+.table-container {
+margin-top: 20px;
+overflow-x: auto;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 600px;
+}
+
+th,
+td {
+border: 1px solid #ccc;
+padding: 8px;
+text-align: left;
+}
+
+th {
+background: #eee;
+font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+background: #fafafa;
+}
+
+.empty-message {
+padding: 20px;
+text-align: center;
+color: #666;
+}
+
+.error {
+color: #b00020;
+}
+
+.success {
+color: #176b2c;
+}
