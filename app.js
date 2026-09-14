@@ -203,8 +203,9 @@ function displaySummary(headers, dataRows) {
         <h3>Data Quality Report</h3>
     `;
 
+
     /*
-    Duplicates
+    Duplicate records
     */
 
     if (report.duplicates.length === 0) {
@@ -216,14 +217,10 @@ function displaySummary(headers, dataRows) {
     } else {
 
         html += `
-    <p>
-        ⚠️ <strong>Inconsistent phone formatting</strong>
-    </p>
-    <p>
-        Some phone numbers appear to use different formats.
-        This does not necessarily mean the numbers are incorrect.
-    </p>
-`;
+            <p>
+                ⚠️ <strong>Duplicate records found</strong>
+            </p>
+        `;
 
         html += `<ul>`;
 
@@ -231,9 +228,10 @@ function displaySummary(headers, dataRows) {
 
             html += `
                 <li>
-                    Duplicate rows: ${item.rows.join(", ")}
+                    Data rows ${item.rows.join(" and ")}
                 </li>
             `;
+
         });
 
         html += `</ul>`;
@@ -254,8 +252,7 @@ function displaySummary(headers, dataRows) {
 
         html += `
             <p>
-                ⚠️ <strong>${report.missing.length}</strong>
-                missing value(s) found.
+                ⚠️ <strong>Missing information</strong>
             </p>
         `;
 
@@ -265,9 +262,10 @@ function displaySummary(headers, dataRows) {
 
             html += `
                 <li>
-                    ${item.column}: row ${item.row}
+                    ${item.column}: data row ${item.row}
                 </li>
             `;
+
         });
 
         html += `</ul>`;
@@ -288,8 +286,7 @@ function displaySummary(headers, dataRows) {
 
         html += `
             <p>
-                ⚠️ <strong>${report.invalidEmails.length}</strong>
-                invalid email address(es) found.
+                ⚠️ <strong>Invalid email address found</strong>
             </p>
         `;
 
@@ -299,9 +296,10 @@ function displaySummary(headers, dataRows) {
 
             html += `
                 <li>
-                    ${item.column}: row ${item.row}
+                    ${item.column}: data row ${item.row}
                 </li>
             `;
+
         });
 
         html += `</ul>`;
@@ -309,33 +307,97 @@ function displaySummary(headers, dataRows) {
 
 
     /*
-    Phone number formatting
+    Same phone number in different formats
     */
 
     if (report.phoneIssues.length === 0) {
 
         html += `
-            <p>✅ No inconsistent phone numbers detected.</p>
+            <p>
+                ✅ No phone numbers were found
+                with inconsistent formatting.
+            </p>
         `;
 
     } else {
 
         html += `
             <p>
-                ⚠️ <strong>${report.phoneIssues.length}</strong>
-                phone-number formatting issue(s) found.
+                ⚠️ <strong>
+                    Same phone number written in different formats
+                </strong>
+            </p>
+        `;
+
+        report.phoneIssues.forEach(function (item) {
+
+            html += `
+                <p>
+                    <strong>
+                        ${item.column}: data rows
+                        ${item.rows.join(" and ")}
+                    </strong>
+                </p>
+            `;
+
+            html += `<ul>`;
+
+            item.values.forEach(function (value, index) {
+
+                html += `
+                    <li>
+                        Data row ${item.rows[index]}:
+                        ${value}
+                    </li>
+                `;
+
+            });
+
+            html += `</ul>`;
+
+            html += `
+                <p>
+                    These appear to be the same phone number,
+                    but they are written differently.
+                </p>
+            `;
+        });
+    }
+
+
+    /*
+    Suspicious phone values
+    */
+
+    if (report.suspiciousPhones.length === 0) {
+
+        html += `
+            <p>
+                ✅ No obviously suspicious phone values found.
+            </p>
+        `;
+
+    } else {
+
+        html += `
+            <p>
+                ⚠️ <strong>
+                    Suspicious phone value found
+                </strong>
             </p>
         `;
 
         html += `<ul>`;
 
-        report.phoneIssues.forEach(function (item) {
+        report.suspiciousPhones.forEach(function (item) {
 
             html += `
                 <li>
-                    ${item.column}: rows ${item.rows.join(", ")}
+                    ${item.column}: data row ${item.row}
+                    — "${item.value}"
                 </li>
             `;
+
         });
 
         html += `</ul>`;
@@ -344,6 +406,8 @@ function displaySummary(headers, dataRows) {
 
     summary.innerHTML = html;
 }
+
+
 
 
 /*
