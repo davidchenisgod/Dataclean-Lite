@@ -246,24 +246,12 @@ function runDataCleaning() {
         }).length;
 
 
-    const message =
+        displayChangeReport(
+        currentDataRows.length,
+        result.rows.length,
+        result.changes
+    );
 
-        "Cleaning complete!\n\n" +
-
-        "Original records: " +
-        currentDataRows.length +
-
-        "\nCleaned records: " +
-        result.rows.length +
-
-        "\nDuplicates removed: " +
-        removedDuplicates +
-
-        "\nFormatting changes: " +
-        formattingChanges;
-
-
-    alert(message);
 
 
     downloadCSV(
