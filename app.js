@@ -412,7 +412,7 @@ function displaySummary(headers, dataRows) {
 
 /*
 Analyze the uploaded data.
-*/
+*/    
 
 function analyzeData(headers, dataRows) {
 
@@ -430,82 +430,84 @@ function analyzeData(headers, dataRows) {
     /*
     Find duplicate records.
 
-    Row numbers here refer to DATA rows,
-    not the CSV header.
+    We normalize the data first so that small formatting
+    differences don't hide duplicate records.
 
-    Therefore the first data row is row 1.
+    Example:
+
+    John@Gmail.com
+    john@gmail.com
+
+    are treated as the same email.
+
+    And:
+
+    868-555-1234
+    8685551234
+
+    are treated as the same phone number.
     */
 
-      const rowMap = new Map();
+    const rowMap = new Map();
 
-dataRows.forEach(function (row, index) {
+    dataRows.forEach(function (row, index) {
 
-    const rowNumber = index + 1;
+        const rowNumber = index + 1;
 
-    /*
-    Create a normalized version of the row.
+        const normalizedRow = row.map(function (value, columnIndex) {
 
-    This makes duplicate detection smarter by ignoring:
-    - Capitalization differences
-    - Extra spaces
-    - Phone formatting differences
-    */
+            const header =
+                (headers[columnIndex] || "").toLowerCase();
 
-    const normalizedRow = row.map(function (value, columnIndex) {
+            let cleanedValue =
+                (value || "").trim().toLowerCase();
 
-        const header = (headers[columnIndex] || "").toLowerCase();
 
-        let cleanedValue = (value || "")
-            .trim()
-            .toLowerCase();
+            /*
+            Normalize phone numbers by removing
+            spaces, dashes, brackets, etc.
+            */
 
-        /*
-        Normalize phone numbers.
+            if (header.includes("phone")) {
 
-        Example:
+                cleanedValue =
+                    cleanedValue.replace(/\D/g, "");
+            }
 
-        868-555-1234
 
-        becomes:
+            return cleanedValue;
 
-        8685551234
-        */
+        });
 
-        if (header.includes("phone")) {
 
-            cleanedValue = cleanedValue.replace(/\D/g, "");
+        const key = JSON.stringify(normalizedRow);
+
+
+        if (!rowMap.has(key)) {
+
+            rowMap.set(key, [rowNumber]);
+
+        } else {
+
+            rowMap.get(key).push(rowNumber);
+
         }
 
-        return cleanedValue;
     });
 
 
-    const key = JSON.stringify(normalizedRow);
+    rowMap.forEach(function (rows) {
 
+        if (rows.length > 1) {
 
-    if (!rowMap.has(key)) {
+            report.duplicates.push({
+                rows: rows
+            });
 
-        rowMap.set(key, [rowNumber]);
+        }
 
-    } else {
+    });
 
-        rowMap.get(key).push(rowNumber);
-    }
-
-});
-
-
-rowMap.forEach(function (rows) {
-
-    if (rows.length > 1) {
-
-        report.duplicates.push({
-            rows: rows
-        });
-
-    }
-
-});          
 
     /*
     Find missing values.
@@ -522,11 +524,16 @@ rowMap.forEach(function (rows) {
             if (value.trim() === "") {
 
                 report.missing.push({
+
                     column: header,
                     row: rowNumber
+
                 });
+
             }
+
         });
+
     });
 
 
@@ -540,7 +547,8 @@ rowMap.forEach(function (rows) {
 
             dataRows.forEach(function (row, rowIndex) {
 
-                const value = (row[columnIndex] || "").trim();
+                const value =
+                    (row[columnIndex] || "").trim();
 
                 if (
                     value !== "" &&
@@ -548,12 +556,18 @@ rowMap.forEach(function (rows) {
                 ) {
 
                     report.invalidEmails.push({
+
                         column: header,
                         row: rowIndex + 1
+
                     });
+
                 }
+
             });
+
         }
+
     });
 
 
@@ -567,27 +581,33 @@ rowMap.forEach(function (rows) {
 
             const phoneMap = new Map();
 
+
             dataRows.forEach(function (row, rowIndex) {
 
-                const value = (row[columnIndex] || "").trim();
+                const value =
+                    (row[columnIndex] || "").trim();
 
                 if (value === "") {
                     return;
                 }
 
-                const digits = value.replace(/\D/g, "");
+
+                const digits =
+                    value.replace(/\D/g, "");
+
 
                 /*
-                Flag very short phone values instead
-                of silently ignoring them.
+                Very short phone values are suspicious.
                 */
 
                 if (digits.length < 7) {
 
                     report.suspiciousPhones.push({
+
                         column: header,
                         row: rowIndex + 1,
                         value: value
+
                     });
 
                     return;
@@ -595,7 +615,9 @@ rowMap.forEach(function (rows) {
 
 
                 /*
-                Store numbers by their digits so that:
+                Store phone numbers by their digits.
+
+                This means:
 
                 868-555-1234
 
@@ -612,12 +634,14 @@ rowMap.forEach(function (rows) {
 
                 }
 
+
                 phoneMap.get(digits).push({
 
                     value: value,
                     row: rowIndex + 1
 
                 });
+
             });
 
 
@@ -629,10 +653,15 @@ rowMap.forEach(function (rows) {
             phoneMap.forEach(function (entries) {
 
                 const formats = new Set(
+
                     entries.map(function (entry) {
+
                         return entry.value;
+
                     })
+
                 );
+
 
                 if (formats.size > 1) {
 
@@ -641,17 +670,25 @@ rowMap.forEach(function (rows) {
                         column: header,
 
                         rows: entries.map(function (entry) {
+
                             return entry.row;
+
                         }),
 
                         values: entries.map(function (entry) {
+
                             return entry.value;
+
                         })
 
                     });
+
                 }
+
             });
+
         }
+
     });
 
 
