@@ -193,14 +193,68 @@ function displaySummary(headers, dataRows) {
 
     const report = analyzeData(headers, dataRows);
 
+    const duplicateCount = report.duplicates.length;
+    const missingCount = report.missing.length;
+    const invalidEmailCount = report.invalidEmails.length;
+    const phoneIssueCount = report.phoneIssues.length;
+    const suspiciousPhoneCount = report.suspiciousPhones.length;
+
+    const totalIssues =
+        duplicateCount +
+        missingCount +
+        invalidEmailCount +
+        phoneIssueCount +
+        suspiciousPhoneCount;
+
+
     let html = `
-        <strong>Columns:</strong> ${headers.length}
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        <strong>Records:</strong> ${dataRows.length}
+
+        <div class="results-header">
+
+            <div>
+                <p class="results-label">ANALYSIS COMPLETE</p>
+
+                <h2>Data Quality Report</h2>
+
+                <p class="results-description">
+                    We checked your CSV for common data-quality problems.
+                </p>
+            </div>
+
+            <div class="records-count">
+                <strong>${dataRows.length}</strong>
+                <span>records</span>
+            </div>
+
+        </div>
+
+
+        <div class="quality-cards">
+
+            <div class="quality-card">
+                <span class="quality-number">${totalIssues}</span>
+                <span class="quality-label">Issues found</span>
+            </div>
+
+            <div class="quality-card">
+                <span class="quality-number">${duplicateCount}</span>
+                <span class="quality-label">Duplicate groups</span>
+            </div>
+
+            <div class="quality-card">
+                <span class="quality-number">${missingCount}</span>
+                <span class="quality-label">Missing values</span>
+            </div>
+
+            <div class="quality-card">
+                <span class="quality-number">${invalidEmailCount}</span>
+                <span class="quality-label">Invalid emails</span>
+            </div>
+
+        </div>
 
         <hr>
 
-        <h3>Data Quality Report</h3>
     `;
 
 
@@ -307,7 +361,7 @@ function displaySummary(headers, dataRows) {
 
 
     /*
-    Same phone number in different formats
+    Phone formatting
     */
 
     if (report.phoneIssues.length === 0) {
@@ -355,12 +409,6 @@ function displaySummary(headers, dataRows) {
 
             html += `</ul>`;
 
-            html += `
-                <p>
-                    These appear to be the same phone number,
-                    but they are written differently.
-                </p>
-            `;
         });
     }
 
@@ -406,8 +454,7 @@ function displaySummary(headers, dataRows) {
 
     summary.innerHTML = html;
 }
-
-
+        
 
 
 /*
