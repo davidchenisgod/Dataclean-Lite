@@ -357,21 +357,26 @@ function analyzeData(headers, dataRows) {
         duplicates: [],
         missing: [],
         invalidEmails: [],
-        phoneIssues: []
+        phoneIssues: [],
+        suspiciousPhones: []
+
     };
 
 
     /*
-    Find duplicate rows.
+    Find duplicate records.
 
-    The complete row is compared.
+    Row numbers here refer to DATA rows,
+    not the CSV header.
+
+    Therefore the first data row is row 1.
     */
 
     const rowMap = new Map();
 
     dataRows.forEach(function (row, index) {
 
-        const rowNumber = index + 2;
+        const rowNumber = index + 1;
 
         const key = JSON.stringify(row);
 
@@ -403,7 +408,7 @@ function analyzeData(headers, dataRows) {
 
     dataRows.forEach(function (row, rowIndex) {
 
-        const rowNumber = rowIndex + 2;
+        const rowNumber = rowIndex + 1;
 
         headers.forEach(function (header, columnIndex) {
 
@@ -432,12 +437,6 @@ function analyzeData(headers, dataRows) {
 
                 const value = (row[columnIndex] || "").trim();
 
-                /*
-                Empty emails are already reported as
-                missing values, so don't report them
-                again as invalid.
-                */
-
                 if (
                     value !== "" &&
                     !isValidEmail(value)
@@ -445,7 +444,7 @@ function analyzeData(headers, dataRows) {
 
                     report.invalidEmails.push({
                         column: header,
-                        row: rowIndex + 2
+                        row: rowIndex + 1
                     });
                 }
             });
@@ -455,17 +454,6 @@ function analyzeData(headers, dataRows) {
 
     /*
     Find phone columns.
-
-    We look for the same phone number appearing
-    in different formats.
-
-    Example:
-
-    868-555-1234
-    8685551234
-
-    These contain the same digits but use
-    different formatting.
     */
 
     headers.forEach(function (header, columnIndex) {
@@ -485,13 +473,33 @@ function analyzeData(headers, dataRows) {
                 const digits = value.replace(/\D/g, "");
 
                 /*
-                Ignore values that contain too few
-                digits to reasonably be a phone number.
+                Flag very short phone values instead
+                of silently ignoring them.
                 */
 
                 if (digits.length < 7) {
+
+                    report.suspiciousPhones.push({
+                        column: header,
+                        row: rowIndex + 1,
+                        value: value
+                    });
+
                     return;
                 }
+
+
+                /*
+                Store numbers by their digits so that:
+
+                868-555-1234
+
+                and
+
+                8685551234
+
+                are recognized as the same number.
+                */
 
                 if (!phoneMap.has(digits)) {
 
@@ -500,11 +508,18 @@ function analyzeData(headers, dataRows) {
                 }
 
                 phoneMap.get(digits).push({
+
                     value: value,
-                    row: rowIndex + 2
+                    row: rowIndex + 1
+
                 });
             });
 
+
+            /*
+            Find the same phone number written
+            in different formats.
+            */
 
             phoneMap.forEach(function (entries) {
 
@@ -517,10 +532,17 @@ function analyzeData(headers, dataRows) {
                 if (formats.size > 1) {
 
                     report.phoneIssues.push({
+
                         column: header,
+
                         rows: entries.map(function (entry) {
                             return entry.row;
+                        }),
+
+                        values: entries.map(function (entry) {
+                            return entry.value;
                         })
+
                     });
                 }
             });
@@ -530,7 +552,6 @@ function analyzeData(headers, dataRows) {
 
     return report;
 }
-
 
 /*
 Simple email validation.
