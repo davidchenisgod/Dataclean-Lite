@@ -51,17 +51,20 @@ fileInput.addEventListener("change", function () {
 
             const headers = rows[0];
 
-            if (headers.length === 0) {
+if (headers.length === 0) {
 
-                status.textContent = "No column headers were found.";
-                status.className = "status error";
+    status.textContent = "No column headers were found.";
+    status.className = "status error";
 
-                return;
-            }
+    return;
+}
 
-            const dataRows = rows.slice(1);
+const dataRows = rows.slice(1);
 
-            displaySummary(headers, dataRows);
+currentHeaders = headers;
+currentDataRows = dataRows;
+
+displaySummary(headers, dataRows);
 
             displayTable(headers, dataRows);
 
