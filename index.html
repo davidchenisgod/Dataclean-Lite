@@ -1,37 +1,115 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DataClean Lite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+    <title>DataClean Lite</title>
 
-</head><body><main class="container">
+    <link rel="stylesheet" href="style.css">
+</head>
 
-    <h1>DataClean Lite</h1>
+<body>
 
-    <p class="description">
-        Upload a CSV file to inspect and analyze your data.
-    </p>
+    <main class="app-shell">
 
-    <div class="upload-section">
-        <label for="csvFile">Choose a CSV file:</label>
+        <!-- Header -->
+        <header class="app-header">
 
-        <input
-            type="file"
-            id="csvFile"
-            accept=".csv,text/csv"
-        >
-    </div>
+            <div>
+                <div class="brand">
+                    <span class="brand-mark">✓</span>
+                    <span>DataClean Lite</span>
+                </div>
 
-    <div id="status" class="status" aria-live="polite"></div>
+                <p class="tagline">
+                    Clean messy CSV data in seconds.
+                </p>
+            </div>
 
-    <div id="summary" class="summary"></div>
+            <div class="privacy-badge">
+                🔒 Runs in your browser
+            </div>
 
-    <div id="tableContainer" class="table-container"></div>
+        </header>
 
-</main>
 
-<script src="app.js"></script>
+        <!-- Main content -->
+        <section class="hero">
+
+            <h1>
+                Clean your CSV data
+                <span>without the headache.</span>
+            </h1>
+
+            <p>
+                Upload a CSV file and DataClean Lite will check it for
+                duplicates, missing information, invalid emails,
+                phone-number problems, and other data-quality issues.
+            </p>
+
+        </section>
+
+
+        <!-- Upload area -->
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                ↑
+            </div>
+
+            <h2>Upload your CSV</h2>
+
+            <p>
+                Choose a CSV file from your device to get started.
+            </p>
+
+            <label class="upload-button" for="csvFile">
+                Choose CSV file
+            </label>
+
+            <input
+                type="file"
+                id="csvFile"
+                accept=".csv,text/csv"
+            >
+
+            <p class="upload-note">
+                Your file is processed locally in your browser.
+            </p>
+
+        </section>
+
+
+        <!-- Status -->
+        <div id="status" class="status" aria-live="polite"></div>
+
+
+        <!-- Results -->
+        <section id="summary" class="summary"></section>
+
+        <section class="data-section">
+
+            <div id="tableContainer" class="table-container"></div>
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="app-footer">
+
+            <span>DataClean Lite</span>
+
+            <span>•</span>
+
+            <span>Your data stays on your device</span>
+
+        </footer>
+
+    </main>
+
+
+    <script src="app.js"></script>
 
 </body>
 </html>
