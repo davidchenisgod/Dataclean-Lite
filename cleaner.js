@@ -145,3 +145,38 @@ function downloadCSV(headers, rows, filename = "cleaned-data.csv") {
 
     URL.revokeObjectURL(url);
 }
+
+// ==========================================
+// Run the cleaning process
+// ==========================================
+
+function runDataCleaning() {
+
+    if (typeof headers === "undefined" || typeof dataRows === "undefined") {
+        alert("Please upload a CSV file first.");
+        return;
+    }
+
+    const result = cleanData(headers, dataRows);
+
+    const removedDuplicates =
+        result.changes.filter(change => change.type === "duplicate").length;
+
+    const formattingChanges =
+        result.changes.filter(change => change.type === "format").length;
+
+    const message =
+        "Cleaning complete!\n\n" +
+        "Original records: " + dataRows.length + "\n" +
+        "Cleaned records: " + result.rows.length + "\n" +
+        "Duplicates removed: " + removedDuplicates + "\n" +
+        "Formatting changes: " + formattingChanges;
+
+    alert(message);
+
+    downloadCSV(
+        headers,
+        result.rows,
+        "dataclean-cleaned.csv"
+    );
+}
