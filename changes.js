@@ -37,7 +37,8 @@ function buildChangeReport(changes) {
             report.details.push({
 
                 type: "format",
-                row: change.row
+                row: change.row,
+                changes: change.changes || []
 
             });
 
@@ -106,7 +107,6 @@ function displayChangeReport(
 
             <h4>Changes made</h4>
 
-            <ul>
         `;
 
 
@@ -116,10 +116,17 @@ function displayChangeReport(
 
                 detailsHTML += `
 
-                    <li>
-                        🗑️ Duplicate removed —
-                        data row ${change.row}
-                    </li>
+                    <div class="change-item">
+
+                        <strong>
+                            🗑️ Duplicate removed
+                        </strong>
+
+                        <span>
+                            Data row ${change.row}
+                        </span>
+
+                    </div>
 
                 `;
 
@@ -130,23 +137,61 @@ function displayChangeReport(
 
                 detailsHTML += `
 
-                    <li>
-                        ✏️ Formatting cleaned —
-                        data row ${change.row}
-                    </li>
+                    <div class="change-item">
+
+                        <strong>
+                            ✏️ Data row ${change.row}
+                        </strong>
+
+                `;
+
+
+                change.changes.forEach(function (item) {
+
+                    detailsHTML += `
+
+                        <div class="value-change">
+
+                            <strong>
+                                ${item.column}
+                            </strong>
+
+                            <div>
+                                <span>
+                                    Before:
+                                </span>
+
+                                <code>
+                                    ${escapeChangeText(item.before)}
+                                </code>
+                            </div>
+
+                            <div>
+                                <span>
+                                    After:
+                                </span>
+
+                                <code>
+                                    ${escapeChangeText(item.after)}
+                                </code>
+                            </div>
+
+                        </div>
+
+                    `;
+
+                });
+
+
+                detailsHTML += `
+
+                    </div>
 
                 `;
 
             }
 
         });
-
-
-        detailsHTML += `
-
-            </ul>
-
-        `;
 
     }
 
@@ -198,5 +243,21 @@ function displayChangeReport(
 
 
     summary.prepend(changeReport);
+
+}
+
+
+// ==========================================
+// Safely display changed CSV values
+// ==========================================
+
+function escapeChangeText(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
