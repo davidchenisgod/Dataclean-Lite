@@ -438,32 +438,71 @@ function analyzeData(headers, dataRows) {
 
     const rowMap = new Map();
 
-    dataRows.forEach(function (row, index) {
+dataRows.forEach(function (row, index) {
 
-        const rowNumber = index + 1;
+    const rowNumber = index + 1;
 
-        const key = JSON.stringify(row);
+    /*
+    Create a normalized version of the row.
 
-        if (!rowMap.has(key)) {
+    This makes duplicate detection smarter by ignoring:
+    - Capitalization differences
+    - Extra spaces
+    - Phone formatting differences
+    */
 
-            rowMap.set(key, [rowNumber]);
+    const normalizedRow = row.map(function (value, columnIndex) {
 
-        } else {
+        const header = (headers[columnIndex] || "").toLowerCase();
 
-            rowMap.get(key).push(rowNumber);
+        let cleanedValue = (value || "")
+            .trim()
+            .toLowerCase();
+
+        /*
+        Normalize phone numbers.
+
+        Example:
+
+        868-555-1234
+
+        becomes:
+
+        8685551234
+        */
+
+        if (header.includes("phone")) {
+
+            cleanedValue = cleanedValue.replace(/\D/g, "");
         }
+
+        return cleanedValue;
     });
 
 
-    rowMap.forEach(function (rows) {
+    const key = JSON.stringify(normalizedRow);
 
-        if (rows.length > 1) {
 
-            report.duplicates.push({
-                rows: rows
-            });
-        }
-    });
+    if (!rowMap.has(key)) {
+
+        rowMap.set(key, [rowNumber]);
+
+    } else {
+
+        rowMap.get(key).push(rowNumber);
+    }
+
+});
+
+
+rowMap.forEach(function (rows) {
+
+    if (rows.length > 1) {
+
+        report.duplicates.push({
+            rows: rows
+        });
+
 
 
     /*
