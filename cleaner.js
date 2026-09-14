@@ -109,12 +109,33 @@ function cleanData(headers, dataRows) {
 
         if (rowChanged) {
 
-            changes.push({
+    const changedValues = [];
 
-                type: "format",
-                row: index + 1
+    for (let i = 0; i < originalRow.length; i++) {
+
+        if (originalRow[i] !== cleanedRow[i]) {
+
+            changedValues.push({
+
+                column: headers[i] || `Column ${i + 1}`,
+                before: originalRow[i],
+                after: cleanedRow[i]
 
             });
+
+        }
+
+    }
+
+
+    changes.push({
+
+        type: "format",
+        row: index + 1,
+        changes: changedValues
+
+    });
+
         }
 
 
