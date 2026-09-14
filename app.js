@@ -436,7 +436,7 @@ function analyzeData(headers, dataRows) {
     Therefore the first data row is row 1.
     */
 
-    const rowMap = new Map();
+      const rowMap = new Map();
 
 dataRows.forEach(function (row, index) {
 
@@ -503,7 +503,9 @@ rowMap.forEach(function (rows) {
             rows: rows
         });
 
+    }
 
+});          
 
     /*
     Find missing values.
