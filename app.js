@@ -253,6 +253,27 @@ function displaySummary(headers, dataRows) {
 
         </div>
 
+
+        <div class="clean-action">
+
+            <h3>Ready to clean your data?</h3>
+
+            <p>
+                Create a cleaned copy of your CSV while keeping
+                your original file unchanged.
+            </p>
+
+            <button
+                type="button"
+                id="cleanDataButton"
+                onclick="runDataCleaning()"
+            >
+                Clean Data
+            </button>
+
+        </div>
+
+
         <hr>
 
     `;
@@ -455,7 +476,7 @@ function displaySummary(headers, dataRows) {
     summary.innerHTML = html;
 }
         
-
+        
 
 /*
 Analyze the uploaded data.
