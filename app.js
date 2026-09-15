@@ -234,30 +234,35 @@ function displaySummary(headers, dataRows) {
 
         </div>
 
+<div class="quality-card">
+    <span class="quality-number">${totalIssues}</span>
+    <span class="quality-label">Issues found</span>
+</div>
 
-        <div class="quality-cards">
+<div class="quality-card">
+    <span class="quality-number">${duplicateCount}</span>
+    <span class="quality-label">Duplicate groups</span>
+</div>
 
-            <div class="quality-card">
-                <span class="quality-number">${totalIssues}</span>
-                <span class="quality-label">Issues found</span>
-            </div>
+<div class="quality-card">
+    <span class="quality-number">${missingCount}</span>
+    <span class="quality-label">Missing values</span>
+</div>
 
-            <div class="quality-card">
-                <span class="quality-number">${duplicateCount}</span>
-                <span class="quality-label">Duplicate groups</span>
-            </div>
+<div class="quality-card">
+    <span class="quality-number">${invalidEmailCount}</span>
+    <span class="quality-label">Invalid emails</span>
+</div>
 
-            <div class="quality-card">
-                <span class="quality-number">${missingCount}</span>
-                <span class="quality-label">Missing values</span>
-            </div>
+<div class="quality-card">
+    <span class="quality-number">${phoneIssueCount}</span>
+    <span class="quality-label">Phone formatting issues</span>
+</div>
 
-            <div class="quality-card">
-                <span class="quality-number">${invalidEmailCount}</span>
-                <span class="quality-label">Invalid emails</span>
-            </div>
-
-        </div>
+<div class="quality-card">
+    <span class="quality-number">${suspiciousPhoneCount}</span>
+    <span class="quality-label">Suspicious phone values</span>
+</div>
 
 
         <div class="clean-action">
