@@ -289,7 +289,6 @@ function downloadCSV(
 // ==========================================
 
 function runDataCleaning() {
-alert("Cleaning function is running");
     
     if (
         currentHeaders.length === 0 ||
