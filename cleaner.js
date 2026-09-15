@@ -55,40 +55,97 @@ function cleanData(headers, dataRows) {
 
 
         // Check for duplicates
+//
+// Ignore columns that appear to be row/record identifiers.
+// These values are often unique even when the actual
+// customer/data record is duplicated.
+//
+// Example:
+//
+// 100,John Smith,john@example.com,...
+// 12000,John Smith,john@example.com,...
+//
+// The different index values should not prevent these
+// records from being recognized as duplicates.
 
-        const duplicateKey = JSON.stringify(
+const duplicateKey = JSON.stringify(
 
-            cleanedRow.map(function (value, columnIndex) {
+    cleanedRow
+        .map(function (value, columnIndex) {
 
-                const header =
-                    (headers[columnIndex] || "").toLowerCase();
+            const header =
+                (headers[columnIndex] || "")
+                    .toLowerCase()
+                    .trim();
 
-                if (header.includes("phone")) {
+            /*
+            Ignore common identifier columns.
+            */
 
-                    return value.replace(/\D/g, "");
-                }
+            const isIdentifier =
+                header === "id" ||
+                header === "index" ||
+                header === "record_id" ||
+                header === "record id" ||
+                header === "row_id" ||
+                header === "row id" ||
+                header === "customer_id" ||
+                header === "customer id" ||
+                header === "user_id" ||
+                header === "user id" ||
+                header === "row_number" ||
+                header === "row number";
 
-                return value.toLowerCase().trim();
+            if (isIdentifier) {
 
-            })
-
-        );
-
-
-        if (seenRows.has(duplicateKey)) {
-
-            changes.push({
-
-                type: "duplicate",
-                row: index + 1
-
-            });
-
-            return;
-        }
+                return null;
+            }
 
 
-        seenRows.add(duplicateKey);
+            /*
+            Normalize phone numbers.
+            */
+
+            if (header.includes("phone")) {
+
+                return value
+                    .replace(/\D/g, "");
+            }
+
+
+            /*
+            Normalize other values.
+            */
+
+            return value
+                .toLowerCase()
+                .trim();
+
+        })
+        .filter(function (value) {
+
+            return value !== null;
+
+        })
+
+);
+
+
+if (seenRows.has(duplicateKey)) {
+
+    changes.push({
+
+        type: "duplicate",
+        row: index + 1
+
+    });
+
+    return;
+}
+
+
+seenRows.add(duplicateKey);
+
 
 
         // Check whether formatting changed
