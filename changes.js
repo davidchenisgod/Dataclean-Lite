@@ -61,6 +61,8 @@ function displayChangeReport(
     changes
 ) {
 
+    alert("Change report function is running");
+    
     const report =
         buildChangeReport(changes);
 
