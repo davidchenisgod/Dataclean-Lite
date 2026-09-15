@@ -528,33 +528,71 @@ function analyzeData(headers, dataRows) {
 
         const rowNumber = index + 1;
 
-        const normalizedRow = row.map(function (value, columnIndex) {
+        const normalizedRow = row
+    .map(function (value, columnIndex) {
 
-            const header =
-                (headers[columnIndex] || "").toLowerCase();
-
-            let cleanedValue =
-                (value || "").trim().toLowerCase();
-
-
-            /*
-            Normalize phone numbers by removing
-            spaces, dashes, brackets, etc.
-            */
-
-            if (header.includes("phone")) {
-
-                cleanedValue =
-                    cleanedValue.replace(/\D/g, "");
-            }
+        const header =
+            (headers[columnIndex] || "")
+                .toLowerCase()
+                .trim();
 
 
-            return cleanedValue;
+        /*
+        Ignore common identifier columns.
 
-        });
+        These can be different even when the
+        actual data record is duplicated.
+        */
+
+        const isIdentifier =
+            header === "id" ||
+            header === "index" ||
+            header === "record_id" ||
+            header === "record id" ||
+            header === "row_id" ||
+            header === "row id" ||
+            header === "customer_id" ||
+            header === "customer id" ||
+            header === "user_id" ||
+            header === "user id" ||
+            header === "row_number" ||
+            header === "row number";
 
 
-        const key = JSON.stringify(normalizedRow);
+        if (isIdentifier) {
+
+            return null;
+
+        }
+
+
+        let cleanedValue =
+            (value || "").trim().toLowerCase();
+
+
+        /*
+        Normalize phone numbers.
+        */
+
+        if (header.includes("phone")) {
+
+            cleanedValue =
+                cleanedValue.replace(/\D/g, "");
+
+        }
+
+
+        return cleanedValue;
+
+    })
+    .filter(function (value) {
+
+        return value !== null;
+
+    });
+
+
+const key = JSON.stringify(normalizedRow);
 
 
         if (!rowMap.has(key)) {
